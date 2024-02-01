@@ -29,3 +29,25 @@ export async function PATCH(
     return new NextResponse("server Error", { status: 500 });
   }
 }
+
+export async function DELETE(
+  req: Request,
+  { params }: { params: { serverId: string } },
+) {
+  try {
+    const profile = await currentProfile();
+    if (!profile) return redirectToSignIn();
+    const { serverId } = params;
+    if (!serverId) return new NextResponse("serverId invalid", { status: 400 });
+    const server = await db.server.delete({
+      where: {
+        id: serverId,
+        profileId: profile.id,
+      },
+    });
+    return NextResponse.json(server);
+  } catch (error) {
+    console.log("deleting server error", error);
+    return new NextResponse("server Error", { status: 500 });
+  }
+}
