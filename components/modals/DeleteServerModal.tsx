@@ -26,11 +26,9 @@ const DeleteServerModal = () => {
   const onClick = async () => {
     try {
       setIsLoading(true);
-      console.log("server id", server?.id);
       await axios.delete(`/api/servers/${server?.id}`);
       onClose();
       router.refresh();
-      console.log("here");
       router.push("/");
     } catch (error) {
       console.log(error);
