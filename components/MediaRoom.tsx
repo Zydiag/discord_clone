@@ -19,17 +19,12 @@ export const MediaRoom = ({ chatId, video, audio }: MediaRoomProps) => {
   useEffect(() => {
     if (!user?.fullName) return;
     const name = user?.fullName;
-
-    // const name = `${user.firstName} ${user.lastName}`;
     (async () => {
       try {
         const resp = await fetch(
-          // `/api/livekit?room=${chatId}&username=${name}`,
-          `/api/livekit?room=${chatId}&username=Sahil lakha`,
+          `/api/livekit?room=${chatId}&username=${name}`,
         );
-        console.log("resp", resp);
         const data = await resp.json();
-        console.log(data);
         setToken(data.token);
       } catch (e) {
         console.log(e);
@@ -37,25 +32,7 @@ export const MediaRoom = ({ chatId, video, audio }: MediaRoomProps) => {
     })();
   }, [user?.firstName, user?.lastName, chatId]);
 
-  // console.log(user);
-  // useEffect(() => {
-  //   if (!user?.fullName) return;
-  //   const name = user?.fullName;
-  //   console.log("name", name);
-  //
-  //   fetch(`/api/livekit?room=${chatId}&username=${name}`)
-  //     .then((resp) => resp.json())
-  //     .then((data) => {
-  //       console.log("data", data);
-  //       setToken(data.token);
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching token:", error);
-  //     });
-  // }, []);
-
   if (token === "") {
-    console.log("token empty");
     return (
       <div className="flex flex-col flex-1 justify-center items-center">
         <Loader2 className="h-7 w-7 text-zinc-500 animate-spin my-4" />
