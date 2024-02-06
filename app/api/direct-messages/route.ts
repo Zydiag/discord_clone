@@ -1,7 +1,8 @@
-import { currentProfile } from "@/lib/currentProfile";
-import { db } from "@/lib/db";
-import { Message } from "@prisma/client";
 import { NextResponse } from "next/server";
+import { DirectMessage } from "@prisma/client";
+
+import { db } from "@/lib/db";
+import { currentProfile } from "@/lib/currentProfile";
 
 const MESSAGES_BATCH = 15;
 
@@ -9,23 +10,29 @@ export async function GET(req: Request) {
   try {
     const profile = await currentProfile();
     const { searchParams } = new URL(req.url);
+
     const cursor = searchParams.get("cursor");
-    const channelId = searchParams.get("channelId");
+    const conversationId = searchParams.get("conversationId");
 
-    if (!profile) return new NextResponse("unauthorized", { status: 401 });
-    if (!channelId)
-      return new NextResponse("channel id missing", { status: 400 });
+    if (!profile) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
 
-    let messages: Message[] = [];
+    if (!conversationId) {
+      return new NextResponse("Conversation ID missing", { status: 400 });
+    }
+
+    let messages: DirectMessage[] = [];
+
     if (cursor) {
-      messages = await db.message.findMany({
+      messages = await db.directMessage.findMany({
         take: MESSAGES_BATCH,
         skip: 1,
         cursor: {
           id: cursor,
         },
         where: {
-          channelId,
+          conversationId,
         },
         include: {
           member: {
@@ -39,10 +46,10 @@ export async function GET(req: Request) {
         },
       });
     } else {
-      messages = await db.message.findMany({
+      messages = await db.directMessage.findMany({
         take: MESSAGES_BATCH,
         where: {
-          channelId,
+          conversationId,
         },
         include: {
           member: {
@@ -68,7 +75,7 @@ export async function GET(req: Request) {
       nextCursor,
     });
   } catch (error) {
-    console.log("messages get error", error);
+    console.log("[DIRECT_MESSAGES_GET]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }
