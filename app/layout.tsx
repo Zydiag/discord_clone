@@ -11,8 +11,8 @@ import "./globals.css";
 const font = Open_Sans({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Chat App",
-  description: "Discord clone",
+  title: "Discord Clone",
+  description: "Discord clone ",
 };
 
 export default function RootLayout({
